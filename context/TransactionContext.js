@@ -15,9 +15,7 @@ const router = new AlphaRouter({ chainId, provider: web3Provider })
 const fMATIC = new Token(chainId, '0x514e44C30d8f1CC846bfFC2611d0eee1AcCaFc3a', 18, 'fMATIC', 'fMATIC')
 const fMWP = new Token(chainId, '0xd2B2Ad7252AA2f633223c9863dd979772E7FB416', 18, 'fMWP', 'fMWP')
 
-const amountIn = "1"
-const weiAmountIn = ethers.utils.parseUnits(amountIn, 18)
-const inputAmount = CurrencyAmount.fromRawAmount(fMATIC, JSBI.BigInt(weiAmountIn))
+
 // const inputAmount = 1
 const slippageAmount = 5
 const deadline = Math.floor(Date.now()/1000 + (10 * 60))
@@ -69,8 +67,10 @@ export const TransactionProvider = ({ children }) => {
       })()
     }, [currentAccount])
 
-    async function getPrice() {
-    // async function getPrice(inputAmount, slippageAmount, deadline, walletAddress) {
+    async function getPrice(amountIn) {
+      const weiAmountIn = ethers.utils.parseUnits(amountIn.toString(), 18)
+      const inputAmount = CurrencyAmount.fromRawAmount(fMATIC, JSBI.BigInt(weiAmountIn))
+
       const swapParams = {
         deadline: deadline,
         recipient: walletAddress,
@@ -78,7 +78,7 @@ export const TransactionProvider = ({ children }) => {
       }
   
       const route = await router.route(inputAmount, fMWP, TradeType.EXACT_INPUT, swapParams)
-      const quoteAmountOut = route.quote.toFixed(6)
+      const quoteAmountOut = route.quote.toFixed(3)
       // console.log(quoteAmountOut)
       console.log("getPrice", quoteAmountOut)
       return [
