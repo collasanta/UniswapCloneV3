@@ -9,6 +9,7 @@ import Modal from 'react-modal'
 import { useRouter } from 'next/router'
 import TransactionLoader from './TransactionLoader'
 import BeatLoader from 'react-spinners/BeatLoader';
+import ConfigModal from './ConfigModal'
 
 
 const style = {
@@ -47,6 +48,9 @@ const Swap = () => {
    const [amountMatic, setAmountMatic] = useState("1")
    const [amountTHIRD, setAmountTHIRD] = useState()
    const [loading, setloading] = useState(true)
+   const [showModal, setShowModal] = useState(undefined)
+   const [deadlineMinutes, setDeadlineMinutes] = useState(30)
+   const [slippageAmount, setSlippageAmount] = useState(5)
 
    const handleChange = (event) => {
     setAmountMatic(event.target.value);
@@ -77,7 +81,19 @@ const Swap = () => {
          <div className={style.formHeader}>
             <div>Swap Tokens </div>
             <div>
-            <RiSettings3Fill />
+              <span className='gearContainer' onClick={() => {setShowModal(true)}}>
+                <RiSettings3Fill />
+              </span>
+              {showModal && (
+                    <ConfigModal
+                      onClose={()=> setShowModal(false)}
+                      setDeadlineMinutes={setDeadlineMinutes}
+                      deadlineMinutes={deadlineMinutes}
+                      setSlippageAmount={setSlippageAmount}
+                      slippageAmount={slippageAmount}
+                    />
+              ) }
+            
             </div>
         </div>
 
